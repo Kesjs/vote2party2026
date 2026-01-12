@@ -11,8 +11,10 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <HowToVoteSection />
-        <VoteFormSection />
+        <HowToVoteSection id="pourquoi-voter" />
+        <div id="voter">
+          <VoteFormSection />
+        </div>
         <ResultsSection />
       </main>
       <Footer />

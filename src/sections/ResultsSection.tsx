@@ -393,7 +393,7 @@ export default function ResultsSection() {
                       id="vote-distribution-heading" 
                       className="text-lg font-semibold text-gray-900"
                     >
-                      Répartition par département
+                      Répartions   
                     </h3>
                   </div>
                   <button

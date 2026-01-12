@@ -1,7 +1,11 @@
 import { Vote, Target, TrendingUp, ShieldCheck, HandCoins, Scale, Users, BarChart2 } from 'lucide-react';
 import VoteFormWrapper from '@/components/VoteFormWrapper';
 
-const HowToVoteSection = () => {
+interface HowToVoteSectionProps {
+  id?: string;
+}
+
+const HowToVoteSection = ({ id }: HowToVoteSectionProps) => {
   const steps = [
     {
       number: 1,
@@ -33,14 +37,14 @@ const HowToVoteSection = () => {
   ];
 
   return (
-    <section id="voter" className="py-20 bg-gray-50">
+    <section id={id} className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             3 bonnes raisons pour voter 
           </h2>
           <p className="text-lg md:text-xl text-gray-600">
-            Les bonnes raisons de voter sont nombreuses et varient d’une personne à une autre. 
+            Parce que l'avenir ne se décide pas sans toi.
           </p>
         </div>
 

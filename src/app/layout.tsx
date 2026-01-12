@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Vote Party",
   description:
-    "Plateforme citoyenne de vote en ligne permettant d’exprimer son opinion et de suivre les tendances électorales en temps réel, dans un cadre transparent, sécurisé et accessible à tous.",
+    "      Vote, fete, agit ",
   icons: {
     icon: [
       { url: '/logo.png', sizes: '64x64', type: 'image/png' },

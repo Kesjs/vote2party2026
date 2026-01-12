@@ -83,24 +83,41 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeSection === item.href.replace('#', '');
-            return (
+          {/* Navigation de gauche */}
+          <div className="flex items-center space-x-6">
+            {NAV_ITEMS.filter(item => item.position === 'left').map((item) => {
+              const isActive = activeSection === item.href.replace('#', '');
+              return (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  onClick={(e) => scrollToSection(e, item.href)}
+                  className={`px-3 py-1.5 text-sm font-medium transition-colors relative ${isActive ? 'text-green-600' : 'text-gray-700 hover:bg-gray-100'}`}
+                >
+                  {item.name}
+                  {isActive && (
+                    <span 
+                      className="absolute left-3 right-3 -bottom-1 h-0.5 bg-green-600 transition-all duration-300"
+                    />
+                  )}
+                </a>
+              );
+            })}
+          </div>
+
+          {/* Bouton à droite */}
+          <div className="flex items-center space-x-4">
+            {NAV_ITEMS.filter(item => item.position === 'right').map((item) => (
               <a
                 key={item.name}
                 href={item.href}
                 onClick={(e) => scrollToSection(e, item.href)}
-                className={`px-3 py-1.5 text-sm font-medium transition-colors relative ${isActive ? 'text-green-600' : 'text-gray-700 hover:bg-gray-100'}`}
+                className={item.className || 'px-4 py-2 text-sm font-medium transition-colors'}
               >
                 {item.name}
-                {isActive && (
-                  <span 
-                    className="absolute left-3 right-3 -bottom-1 h-0.5 bg-green-600 transition-all duration-300"
-                  />
-                )}
               </a>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -149,7 +166,7 @@ const Header = () => {
               </div>
               <nav className="flex-1 overflow-y-auto px-6 pb-8">
                 <div className="flex flex-col space-y-2">
-                  {NAV_ITEMS.map((item) => {
+                  {NAV_ITEMS.filter(item => item.position !== 'right').map((item) => {
                     const isActive = activeSection === item.href.replace('#', '');
                     return (
                       <a
@@ -169,6 +186,23 @@ const Header = () => {
                       </a>
                     );
                   })}
+                  
+                  {/* Bouton "Je m'engage à voter" en bas du menu mobile */}
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    {NAV_ITEMS.filter(item => item.position === 'right').map((item) => (
+                      <a
+                        key={item.name}
+                        href={item.href}
+                        onClick={(e) => {
+                          scrollToSection(e, item.href);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className={`${item.className} w-full flex justify-center py-3 rounded-lg text-lg font-medium transition-colors duration-200`}
+                      >
+                        {item.name}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </nav>
             </div>

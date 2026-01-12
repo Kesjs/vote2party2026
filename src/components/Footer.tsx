@@ -32,7 +32,6 @@ const Footer = () => {
                   className="w-24 h-24 object-contain hover:opacity-90 transition-opacity"
                 />
               </a>
-              <p className="text-1xl font-bold text-green-400">Je suis jeune, je m&apos;engage</p>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Le pouls de la démocratie. Une plateforme citoyenne pour exprimer votre opinion.
@@ -83,12 +82,12 @@ const Footer = () => {
                   href="mailto:contact@epsond.com"
                   className="text-gray-300 hover:text-green-400 transition-colors duration-200"
                 >
-                  contact@epsond.com
+                   tribrmag@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-green-400" />
-                <span className="text-gray-300">+229 01 51 22 57 03</span>
+                <span className="text-gray-300"> +229 01 49 94 44 44</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-green-400 mt-1" />

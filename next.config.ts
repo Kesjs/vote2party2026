@@ -2,14 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  output: 'standalone',
-  distDir: '.next',
+  output: 'export',
   // Désactive la génération de la source map en production pour gagner en performance
   productionBrowserSourceMaps: false,
-  // Active la compression gzip et brotli pour les ressources statiques
-  compress: true,
   // Optimise les images pour le chargement
   images: {
+    unoptimized: true, // Nécessaire pour l'export statique
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
   },
