@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /out/
+/public_html/
 
 # production
 /build
@@ -39,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Additional ignores for large files
+*.zip
+*.tar.gz
+*.rar
+dist/
