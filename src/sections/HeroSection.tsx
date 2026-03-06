@@ -55,7 +55,7 @@ const HeroSection = () => {
   className="cursor-pointer flex justify-center"
 >
   <Image
-    src="/voteparty.png"
+    src="/logo.png"
     alt="Logo E-Vote"
     width={400}
     height={160}

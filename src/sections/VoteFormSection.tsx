@@ -428,11 +428,11 @@ const VoteFormSection = () => {
 <div className="container mx-auto px-4">
         <div className="text-center mb-12">
            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Je m’inscris à la <span className="text-green-600">vote party</span>
+            Je m’engage à  <span className="text-green-600">voter </span>
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Inscris toi et participe à la tombola 
-          </p>
+            Inscris toi et tente ta chance de remporter un cadeau 
+        </p>
 
         </div>
 

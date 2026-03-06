@@ -444,7 +444,7 @@ export default function ResultsSection() {
                         />
                         <YAxis />
                         <Tooltip 
-                          formatter={(value: number | undefined) => [`${value || 0} votes`, 'Nombre de votes']}
+                          formatter={(value: any) => [`${value || 0} votes`, 'Nombre de votes']}
                         />
                         <Bar dataKey="value" fill="#10B981" name="Votes" />
                       </BarChart>

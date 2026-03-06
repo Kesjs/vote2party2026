@@ -61,7 +61,7 @@ export const ParticipationBarChart = memo(({
             width={60}
           />
           <Tooltip 
-            formatter={(value: number | undefined) => [`${value || 0}%`, tooltipLabel]}
+            formatter={(value: any) => [`${value || 0}%`, tooltipLabel]}
   labelFormatter={(label: string) => `Département: ${label}`}
   contentStyle={{
               borderRadius: '0.5rem',
