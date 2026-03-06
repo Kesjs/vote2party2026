@@ -2,9 +2,42 @@
 
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
-
+import { useState, useEffect } from 'react';
 
 const HeroSection = () => {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    const targetDate = new Date('2026-03-27T20:00:00').getTime();
+
+    const updateTimer = () => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000),
+      });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleVoteNow = () => {
     const element = document.querySelector('#voter');
     if (element) {
@@ -18,102 +51,84 @@ const HeroSection = () => {
     const element = document.getElementById(sectionId);
     if (element) {
       window.scrollTo({
-        top: element.offsetTop - 80, // Account for header height
+        top: element.offsetTop - 80,
         behavior: 'smooth'
       });
-      // setActiveSection(sectionId);
-      // setIsMobileMenuOpen(false);
     }
   };
+
   return (
     <section 
       id="accueil" 
-      className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat pt-24 md:pt-32"
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat overflow-hidden pt-16"
       style={{
         backgroundImage: 'url("hero.jpg")',
-        backgroundSize: '120% auto',
+        backgroundSize: 'cover',
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         backgroundBlendMode: 'overlay',
-        paddingTop: '6rem' /* Pour compenser le header fixe */
       }}
     >
-      {/* Overlay sombre pour améliorer la lisibilité */}
-      <div className="absolute inset-0 bg-black/70"></div>
+      <div className="absolute inset-0 bg-black/75"></div>
       
-      <div className="relative container mx-auto px-4 text-center z-10 pt-4 md:pt-6">
+      <div className="relative container mx-auto px-4 flex flex-col items-center justify-center z-10 text-center mt-8 md:mt-12">
+        {/* Logo plus discret */}
         <div className="mb-8 md:mb-12">
-          {/* <h1 className="text-6xl md:text-8xl font-extrabold mb-2">
-            <span className="font-serif italic text-green-400 drop-shadow-lg">VOTE</span>
-          </h1>
-          <h2 className="text-5xl md:text-7xl font-bold mb-12 ml-24 md:ml-32">
-            <span className="font-sans italic text-green-600">party !</span>
-          </h2> */}
-
           <a
-  href="#accueil"
-  onClick={(e) => scrollToSection(e, '#accueil')}
-  className="cursor-pointer flex justify-center"
->
-  <Image
-    src="/logo.png"
-    alt="Logo E-Vote"
-    width={400}
-    height={160}
-    className="
-      object-contain
-      transition-transform duration-300 hover:scale-105
-      max-h-[200px] md:max-h-[250px] lg:max-h-[300px]
-      w-auto h-auto
-      mx-auto
-    "
-  />
-</a>
+            href="#accueil"
+            onClick={(e) => scrollToSection(e, '#accueil')}
+            className="cursor-pointer inline-block transition-transform duration-300 hover:scale-105"
+          >
+            <Image
+              src="/logo.png"
+              alt="Logo E-Vote"
+              width={180}
+              height={72}
+              className="object-contain max-h-[60px] md:max-h-[80px] w-auto h-auto"
+            />
+          </a>
+        </div>
 
+        {/* Countdown Timer dimensionné plus finement */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-10">
+          {[
+            { label: 'JOURS', value: timeLeft.days },
+            { label: 'HEURES', value: timeLeft.hours },
+            { label: 'MINUTES', value: timeLeft.minutes },
+            { label: 'SECONDES', value: timeLeft.seconds },
+          ].map((item, idx) => (
+            <div key={idx} className="group relative">
+              <div className="absolute -inset-1 bg-green-500/10 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              
+              <div className="relative flex flex-col items-center justify-center bg-white/5 backdrop-blur-sm border border-white/5 rounded-xl w-18 h-18 sm:w-26 sm:h-26 transition-all duration-500 hover:border-white/10 hover:bg-white/10 shadow-xl">
+                <span className="font-mono text-xl sm:text-4xl font-bold text-green-400 tracking-tighter">
+                  {item.value.toString().padStart(2, '0')}
+                </span>
+                <span className="text-[7px] sm:text-[9px] text-gray-400 tracking-[0.2em] mt-1 font-medium">
+                  {item.label}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
 
-          
-          <div className="flex items-center justify-center space-x-8 text-2xl md:text-4xl font-bold text-white mb-6">
-            <span className="hover:text-green-300 transition-colors duration-300">DJ SET</span>
-            <span className="w-3 h-3 bg-green-400 rounded-full"></span>
-            <span className="hover:text-green-300 transition-colors duration-300">TOMBOLA</span>
-            <span className="w-3 h-3 bg-green-400 rounded-full"></span>
-            <span className="hover:text-green-300 transition-colors duration-300">BBQ</span>
-          </div>
-          
-          <div className="text-xl md:text-2xl text-gray-200 font-light tracking-wider mb-8">
-            MIX: DJ FAMOUZ, DJVBI, YANN LE KILLER
-          </div>
-          
-          <div className="text-2xl md:text-3xl text-white font-medium mb-2">
-            13h00 - 23h00
-          </div>
-          <div className="text-xl text-white/90 font-light mb-8">
-            11 JANVIER • DIMANCHE
-          </div>
-          
-          <div className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            Une boisson offerte sur présentation d&apos;une preuve de vote
-          </div>
+        {/* RDV Badge plus fine */}
+        <div className="inline-flex items-center px-4 py-1.5 sm:px-6 sm:py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm mb-12">
+          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-2.5"></span>
+          <span className="text-[9px] sm:text-[10px] font-semibold text-white/90 tracking-[0.15em] uppercase">
+            RDV LE 27 MARS 2026
+          </span>
         </div>
         
-        {/* Zone 5 EN BAR avec Entrée gratuite */}
-        <div className="w-full max-w-md mx-auto mb-12 md:mb-16">
-          <div className="relative w-full">
-            <div className="bg-black text-white text-xl md:text-2xl font-bold py-3 px-6 w-full text-center">
-              ZONE 5 BAR
-            </div>
-            <div className="absolute -top-2 -right-2 bg-green-400 text-green-900 text-base md:text-lg font-bold py-1.5 px-3 rounded-full transform rotate-6 whitespace-nowrap">
-              ENTREE GRATUITE
-            </div>
-          </div>
-        </div>
-        
-        <div className="w-full px-4 mb-16">
+        {/* CTA Button - Plus compact, bords carrés et discret */}
+        <div className="w-full max-w-[280px] sm:max-w-xs mx-auto">
           <button
             onClick={handleVoteNow}
-            className="group w-full max-w-md mx-auto flex items-center justify-center px-8 py-5 bg-green-600 text-white font-bold hover:bg-green-700 transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl text-xl"
+            className="group w-full flex items-center justify-between px-6 py-4 bg-green-600 text-white font-bold transition-all duration-300 transform hover:bg-green-700 shadow-lg active:scale-95 border-b-2 border-green-800"
           >
-            Je m&apos;engage à voter 
-            <ArrowRight className="ml-3 w-6 h-6 transition-transform duration-300 group-hover:translate-x-2" />
+            <span className="text-sm sm:text-base tracking-widest uppercase">
+              Je m&apos;engage à voter
+            </span>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
       </div>
