@@ -10,16 +10,11 @@ const Footer = () => {
     { name: 'Résultats', href: '#resultats' }
   ];
 
-  const legalLinks = [
-    { name: "Conditions d'utilisation", href: '#' },
-    { name: 'Politique de confidentialité', href: '#' },
-    { name: 'Mentions légales', href: '#' }
-  ];
 
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center md:text-left">
           {/* Logo et Slogan */}
           <div className="lg:col-span-1">
             <div className="flex flex-col items-start mb-4">
@@ -55,22 +50,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Liens légaux */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 text-green-400">Liens légaux</h3>
-            <ul className="space-y-2">
-              {legalLinks.map((link) => (
-                <li key={link.name}>
-                  <a
-                    href={link.href}
-                    className="text-gray-300 hover:text-green-400 transition-colors duration-200"
-                  >
-                    {link.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
 
           {/* Contact */}
           <div>

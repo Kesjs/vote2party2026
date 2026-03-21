@@ -4,6 +4,7 @@ import HeroSection from '@/sections/HeroSection';
 import HowToVoteSection from '@/sections/HowToVoteSection';
 import VoteFormSection from '@/sections/VoteFormSection';
 import ResultsSection from '@/sections/ResultsSection';
+import TestimonialsSection from '@/sections/TestimonialsSection';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <VoteFormSection />
         </div>
         <ResultsSection />
+        <TestimonialsSection />
       </main>
       <Footer />
     </div>

@@ -12,7 +12,6 @@ export default function MonComptePage() {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [referralLink, setReferralLink] = useState('');
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -20,12 +19,6 @@ export default function MonComptePage() {
     }
   }, [user, isLoading, router]);
 
-  useEffect(() => {
-    if (user) {
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://voteparty2026.com';
-      setReferralLink(`${baseUrl}/ref/${encodeURIComponent(user.first_name?.toLowerCase() || '')}-${encodeURIComponent(user.last_name?.toLowerCase() || '')}`);
-    }
-  }, [user]);
 
   if (isLoading || !user) {
     return <div className="min-h-screen flex items-center justify-center">Chargement sécurisé...</div>;
@@ -39,19 +32,28 @@ export default function MonComptePage() {
     <div className="min-h-screen bg-gray-100 py-12 px-2 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
 
-        {/* Header Dashboard */}
-        <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Mon Espace Personnel</h1>
-            <p className="text-sm sm:text-base text-gray-500">Bienvenue, {user.first_name}</p>
+        {/* Header Dashboard - Single Line on Mobile */}
+        <div className="flex flex-row justify-between items-center bg-white p-3 sm:p-6 rounded-2xl shadow-sm gap-2">
+          <div className="flex flex-col min-w-0">
+            <h1 className="text-[12px] sm:text-2xl font-bold text-gray-900 truncate">Espace Personnel</h1>
+            <p className="text-[10px] sm:text-base text-gray-500 truncate">Salut, {user.first_name}</p>
           </div>
-          <button
-            onClick={logout}
-            className="flex items-center text-red-600 hover:text-red-800 transition-colors font-medium px-3 py-2 text-sm sm:text-base rounded-lg hover:bg-red-50"
-          >
-            <LogOut className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-            Déconnexion
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-4 flex-shrink-0">
+            <button 
+              onClick={() => router.push('/')}
+              className="text-blue-600 hover:text-blue-800 transition-colors font-semibold px-2 py-1.5 text-[10px] sm:text-base rounded-md hover:bg-blue-50 border border-blue-100 sm:border-none"
+            >
+              Accueil
+            </button>
+            <button
+              onClick={logout}
+              className="flex items-center text-red-600 hover:text-red-800 transition-colors font-semibold px-2 py-1.5 text-[10px] sm:text-base rounded-md hover:bg-red-50 border border-red-100 sm:border-none"
+            >
+              <LogOut className="w-3 h-3 sm:w-5 sm:h-5 mr-1" />
+              <span className="hidden xs:inline">Sortir</span>
+              <span className="xs:hidden">Off</span>
+            </button>
+          </div>
         </div>
 
         {/* Section Carte CIP Exact Replica */}
@@ -81,8 +83,8 @@ export default function MonComptePage() {
               </div>
 
               {/* Titres centraux */}
-              <div className="flex flex-col items-center flex-1 mx-4">
-                <h1 className="text-[12px] sm:text-[18px] font-extrabold text-[#1a1a1a] tracking-[0.2em] uppercase mb-1 sm:mb-2">
+              <div className="flex flex-col items-center flex-1 mx-2 sm:mx-4 text-center">
+                <h1 className="text-[10px] sm:text-[18px] font-extrabold text-[#1a1a1a] tracking-[0.15em] sm:tracking-[0.2em] uppercase mb-1 sm:mb-2 w-full">
                   République du Bénin
                 </h1>
                 {/* Ligne Tricolore */}
@@ -94,8 +96,8 @@ export default function MonComptePage() {
                 <h2 className="text-[10px] sm:text-[15px] font-bold text-[#333] uppercase whitespace-nowrap hidden sm:block tracking-wide">
                   TRIBR CARD
                 </h2>
-                <h2 className="text-[9px] font-bold text-[#333] uppercase text-center leading-tight sm:hidden">
-                  TIBR<br />CARD
+                <h2 className="text-[9px] font-bold text-[#333] uppercase text-center leading-tight sm:hidden w-full">
+                  TRIBR<br />CARD
                 </h2>
               </div>
 
@@ -136,7 +138,7 @@ export default function MonComptePage() {
               {/* Photo Area */}
               <div className="w-[65px] h-[85px] sm:w-[110px] sm:h-[140px] bg-[#333] ml-1 sm:ml-2 flex-shrink-0 relative overflow-hidden flex flex-col justify-end rounded-md shadow-md border border-gray-400">
                 {user.photo_url ? (
-                  <img src={user.photo_url} alt="Photo CIP" className="w-full h-full object-cover" />
+                  <img src={user.photo_url} alt="Photo d'identité" className="w-full h-full object-cover" />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center opacity-20">
                     <svg className="w-full h-full text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -184,10 +186,10 @@ export default function MonComptePage() {
               <div className="flex flex-col items-center justify-start pr-1 sm:pr-4 pt-1 sm:pt-2 h-full">
                 <div className="bg-white p-1 sm:p-1.5 border-[2px] border-black rounded-sm shadow-sm">
                   <QRCode
-                    value={referralLink || user.nip}
+                    value={user.nip || '0000000000'}
                     style={{ width: '100%', height: '100%', maxWidth: '110px' }}
                     className="w-[55px] h-[55px] sm:w-[105px] sm:h-[105px]"
-                    level="L"
+                    level="M"
                     fgColor="#000000"
                   />
                 </div>
@@ -237,23 +239,6 @@ export default function MonComptePage() {
           </div>
         </div>
 
-        {/* Section de parrainage explicit */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-2xl shadow-sm border border-green-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <h3 className="text-green-800 font-semibold mb-1">Votre lien de parrainage</h3>
-            <p className="text-sm text-green-600 mb-2">Invitez vos proches à nous rejoindre en utilisant ce lien unique.</p>
-            <code className="bg-white px-3 py-1.5 rounded border border-green-200 text-green-700 text-sm break-all font-mono shadow-sm">
-              {referralLink}
-            </code>
-          </div>
-          <div className="flex-shrink-0 bg-white p-2 rounded-xl shadow-sm">
-            <QRCode
-              value={referralLink}
-              size={100}
-              level="H"
-            />
-          </div>
-        </div>
 
       </div>
     </div>

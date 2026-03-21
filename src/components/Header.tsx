@@ -131,7 +131,7 @@ const Header = () => {
                   href="/mon-compte"
                   className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-lg font-medium transition-colors duration-200"
                 >
-                  Mon Espace CIP
+                  Mon Espace
                 </Link>
                 <button
                   onClick={logout}
@@ -237,7 +237,7 @@ const Header = () => {
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="w-full flex justify-center py-3 bg-green-600 text-white rounded-lg text-lg font-medium transition-colors duration-200"
                         >
-                          Mon Espace CIP
+                          Mon Espace
                         </Link>
                         <button
                           onClick={() => {
