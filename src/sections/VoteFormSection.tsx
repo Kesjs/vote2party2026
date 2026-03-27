@@ -20,6 +20,8 @@ type FormData = {
   commune: string;
   circonscription: string;
   arrondissement: string;
+  centreVote: string;
+  bureauVote: string;
   captcha: string;
   submit?: string;
 };
@@ -37,6 +39,8 @@ const VoteFormSection = () => {
     commune: '',
     circonscription: '',
     arrondissement: '' ,
+    centreVote: '',
+    bureauVote: '',
     captcha: ''
   });
 
@@ -118,6 +122,14 @@ const VoteFormSection = () => {
       newErrors.captcha = 'Code de vérification incorrect';
     }
 
+    if (!formData.centreVote.trim()) {
+      newErrors.centreVote = 'Le centre de vote est obligatoire';
+    }
+
+    if (!formData.bureauVote.trim()) {
+      newErrors.bureauVote = 'Le bureau de vote est obligatoire';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -191,39 +203,6 @@ const VoteFormSection = () => {
       }
 
       // Si pas de doublon, préparer les données pour l'insertion
-      setErrors(prev => ({ ...prev, submit: 'Enregistrement en cours...' }));
-
-      // Attribution automatique du Centre de Vote (Pseudo-réel pour le Bénin)
-      const prefixes = ["EPP G/A", "CEG 1", "EPP G/B", "MAISON DES JEUNES", "COMPLEXE SCOLAIRE", "PLACE PUBLIQUE"];
-      const hashString = (str: string) => {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-          hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        return Math.abs(hash);
-      };
-      
-      const arrondissementName = formData.arrondissement.toUpperCase();
-      const randomPrefix = prefixes[hashString(arrondissementName) % prefixes.length];
-      const centreVote = `${randomPrefix} DE ${arrondissementName}`;
-
-      setErrors(prev => ({ ...prev, submit: 'Attribution du bureau de vote...' }));
-      
-      // Calcul du Bureau de Vote en comptant combien sont déjà inscrits dans ce centre
-      const { count: votersInCenter, error: countError } = await supabase
-        .from('votes')
-        .select('id', { count: 'exact', head: true })
-        .eq('centre_vote', centreVote);
-        
-      if (countError) {
-         console.warn('Erreur lors du comptage du bureau, utilisation du bureau par défaut', countError);
-      }
-      
-      const defaultCapacity = 500;
-      const bureauCountValue = votersInCenter || 0;
-      const bureauNumber = Math.floor(bureauCountValue / defaultCapacity) + 1;
-      const bureauVote = `BUREAU N° ${bureauNumber.toString().padStart(2, '0')}`;
-
       setErrors(prev => ({ ...prev, submit: 'Finalisation de l\'enregistrement...' }));
 
       const voteData = {
@@ -236,8 +215,8 @@ const VoteFormSection = () => {
         commune: formData.commune,
         circonscription: formData.circonscription,
         arrondissement: formData.arrondissement,
-        centre_vote: centreVote,
-        bureau_vote: bureauVote,
+        centre_vote: formData.centreVote.trim().toUpperCase(),
+        bureau_vote: formData.bureauVote.trim().toUpperCase(),
         captcha: formData.captcha.toUpperCase(),
         referral_link: referralLink,
         created_at: new Date().toISOString()
@@ -625,6 +604,62 @@ const VoteFormSection = () => {
                   <p className="mt-1 text-sm text-red-600 flex items-center">
                     <AlertCircle className="w-4 h-4 mr-1" />
                     {errors.arrondissement}
+                  </p>
+                )}
+              </div>
+
+              {/* Centre de Vote */}
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Centre de Vote
+                </label>
+                <input
+                  type="text"
+                  value={formData.centreVote}
+                  onChange={(e) => handleInputChange('centreVote', e.target.value)}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
+                    errors.centreVote 
+                      ? 'border-red-500 bg-red-50' 
+                      : 'border-gray-300 hover:border-gray-400 bg-white'
+                  } text-gray-800 placeholder-gray-400`}
+                  style={{
+                    fontSize: '1rem',
+                    lineHeight: '1.5',
+                  }}
+                  placeholder="Ex: EPP G/A DE SEME"
+                />
+                {errors.centreVote && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.centreVote}
+                  </p>
+                )}
+              </div>
+
+              {/* Bureau de Vote */}
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bureau de Vote
+                </label>
+                <input
+                  type="text"
+                  value={formData.bureauVote}
+                  onChange={(e) => handleInputChange('bureauVote', e.target.value)}
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
+                    errors.bureauVote 
+                      ? 'border-red-500 bg-red-50' 
+                      : 'border-gray-300 hover:border-gray-400 bg-white'
+                  } text-gray-800 placeholder-gray-400`}
+                  style={{
+                    fontSize: '1rem',
+                    lineHeight: '1.5',
+                  }}
+                  placeholder="Ex: Bureau n° 01"
+                />
+                {errors.bureauVote && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.bureauVote}
                   </p>
                 )}
               </div>

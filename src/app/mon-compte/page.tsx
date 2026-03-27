@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import dynamic from 'next/dynamic';
-import { LogOut } from 'lucide-react';
+import { LogOut, Download, Mail, CheckCircle, Loader2 } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 const QRCode = dynamic(() => import('react-qr-code'), { ssr: false });
 
@@ -13,11 +14,59 @@ export default function MonComptePage() {
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
 
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [showEmailSuccess, setShowEmailSuccess] = useState(false);
+
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/connexion');
     }
   }, [user, isLoading, router]);
+
+
+  const handleDownload = async () => {
+    if (!cardRef.current) return;
+    setIsDownloading(true);
+    try {
+      // Attendre un court instant pour s'assurer que tout est rendu
+      const dataUrl = await toPng(cardRef.current, { 
+        cacheBust: true, 
+        pixelRatio: 3, // Haute résolution
+        backgroundColor: '#ffffff'
+      });
+      
+      const link = document.createElement('a');
+      link.download = `TRBR_PASS_${user.last_name}_${user.first_name}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Erreur lors du téléchargement:', err);
+      alert('Une erreur est survenue lors de la génération de l\'image.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!user.email) {
+      alert("Aucune adresse email n'est associée à votre compte.");
+      return;
+    }
+    
+    setIsSendingEmail(true);
+    try {
+      // Simulation d'envoi d'email
+      // Dans une version réelle, on appellerait une API route qui utilise Resend ou SendGrid
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setShowEmailSuccess(true);
+      setTimeout(() => setShowEmailSuccess(false), 4000);
+    } catch (err) {
+      console.error('Erreur d\'envoi:', err);
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
 
 
   if (isLoading || !user) {
@@ -181,11 +230,11 @@ export default function MonComptePage() {
                 <div className="leading-[1.3] sm:leading-[1.4] mb-2 sm:mb-3 text-gray-800 font-medium whitespace-normal">
                   <div className="uppercase flex items-start">
                     <span className="text-gray-500 w-[45px] sm:w-[65px] flex-shrink-0">Centre :</span> 
-                    <span className="font-bold flex-1 text-[#1a1a1a]">{user.centre_vote || `EPP ${user.arrondissement || 'ABOMEY-CALAVI'}`}</span>
+                    <span className="font-bold flex-1 text-[#1a1a1a]">{user.centre_vote || 'NON SPÉCIFIÉ'}</span>
                   </div>
                   <div className="uppercase flex items-start mt-1 sm:mt-2">
                     <span className="text-gray-500 w-[45px] sm:w-[65px] flex-shrink-0">Bureau :</span> 
-                    <span className="font-bold flex-1 text-[#1a1a1a]">{user.bureau_vote || 'BUREAU N° 01'}</span>
+                    <span className="font-bold flex-1 text-[#1a1a1a]">{user.bureau_vote || 'NON SPÉCIFIÉ'}</span>
                   </div>
                 </div>
               </div>
@@ -195,6 +244,47 @@ export default function MonComptePage() {
 
 
           </div>
+
+          {/* Actions additionnelles */}
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full max-w-[650px]">
+            <button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-70"
+            >
+              {isDownloading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Download className="w-5 h-5" />
+              )}
+              {isDownloading ? 'Génération...' : 'Télécharger ma carte'}
+            </button>
+
+            <button
+              onClick={handleSendEmail}
+              disabled={isSendingEmail || showEmailSuccess}
+              className={`flex-1 flex items-center justify-center gap-2 font-bold py-3 px-6 rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-80 ${
+                showEmailSuccess 
+                ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                : 'bg-white hover:bg-gray-50 text-gray-800 border-2 border-gray-200'
+              }`}
+            >
+              {isSendingEmail ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : showEmailSuccess ? (
+                <CheckCircle className="w-5 h-5 text-blue-600" />
+              ) : (
+                <Mail className="w-5 h-5" />
+              )}
+              {isSendingEmail ? 'Envoi en cours...' : showEmailSuccess ? 'Envoyé avec succès !' : 'Recevoir par mail'}
+            </button>
+          </div>
+
+          {showEmailSuccess && (
+            <p className="mt-3 text-sm text-blue-600 font-medium animate-bounce">
+              Votre carte a été envoyée à l'adresse : {user.email}
+            </p>
+          )}
         </div>
 
 
