@@ -73,11 +73,11 @@ export default function MonComptePage() {
 
             {/* En-tête : Logos et République */}
             <div className="flex items-center justify-between px-3 sm:px-8 pt-3 sm:pt-6 relative z-10 w-full">
-              {/* Logo ANIP */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center overflow-hidden flex-shrink-0">
+              {/* Logo TRBR */}
+              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center overflow-hidden flex-shrink-0">
                 <img
-                  src="https://www.peacefm.bj/upload/images/059730366532001710964307.jpg"
-                  alt="Logo ANIP"
+                  src="/tribr.jpeg"
+                  alt="Logo TRBR"
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -94,34 +94,18 @@ export default function MonComptePage() {
                   <div className="flex-1 bg-[#EB1C24]"></div>
                 </div>
                 <h2 className="text-[10px] sm:text-[15px] font-bold text-[#333] uppercase whitespace-nowrap hidden sm:block tracking-wide">
-                  TRIBR CARD
+                  TRBR PASS
                 </h2>
                 <h2 className="text-[9px] font-bold text-[#333] uppercase text-center leading-tight sm:hidden w-full">
-                  TRIBR<br />CARD
+                  TRBR<br />PASS
                 </h2>
               </div>
 
-              {/* Armoiries */}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center flex-shrink-0">
-                <img
-                  src="https://tse2.mm.bing.net/th/id/OIP.op_8airZj0hLmdCzuOvdHwHaHa?rs=1&pid=ImgDetMain&o=7&rm=3"
-                  alt="Armoiries du Bénin"
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              {/* Spacer pour l'équilibre */}
+              <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex-shrink-0"></div>
             </div>
 
-            {/* Ligne grise N° et NIP */}
-            <div className="mt-2 sm:mt-4 w-full flex text-[9px] sm:text-[13px] h-5 sm:h-9 items-center border-t border-b border-gray-300 bg-gray-200 shadow-sm">
-              <div className="h-full px-2 sm:px-6 flex items-center w-[35%] sm:w-[35%] border-r border-[#d1d5db]">
-                <span className="font-bold mr-1 sm:mr-4 text-gray-700">N°</span>
-                <span className="font-mono font-bold tracking-widest text-black text-[9px] sm:text-[14px]">{documentId}</span>
-              </div>
-              <div className="flex-1 flex justify-between items-center px-1 sm:px-6 bg-white h-full relative overflow-hidden">
-                <span className="font-bold whitespace-nowrap text-gray-800 tracking-wide text-[7px] sm:text-[12px] ml-1 sm:ml-0">Numéro Personnel d'Identification :</span>
-                <span className="font-extrabold text-[#C8102E] text-[10px] sm:text-[18px] tracking-wider absolute right-2 sm:right-6">{user.nip || '0000000000'}</span>
-              </div>
-            </div>
+
 
             {/* Corps central (Photo, infos, Code QR) */}
             <div className="flex px-3 sm:px-6 mt-3 sm:mt-6 relative z-10 w-full h-[90px] sm:h-[145px]">
@@ -135,21 +119,10 @@ export default function MonComptePage() {
                 </div>
               </div>
 
-              {/* Photo Area */}
-              <div className="w-[65px] h-[85px] sm:w-[110px] sm:h-[140px] bg-[#333] ml-1 sm:ml-2 flex-shrink-0 relative overflow-hidden flex flex-col justify-end rounded-md shadow-md border border-gray-400">
-                {user.photo_url ? (
-                  <img src={user.photo_url} alt="Photo d'identité" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                    <svg className="w-full h-full text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                  </div>
-                )}
-              </div>
+
 
               {/* Data list */}
-              <div className="flex-1 ml-4 sm:ml-8 text-[8px] sm:text-[13px] leading-[1.5] sm:leading-[1.8] my-auto">
+              <div className="flex-1 ml-1 sm:ml-2 text-[8px] sm:text-[13px] leading-[1.5] sm:leading-[1.8] my-auto">
                 <div className="flex mb-1 sm:mb-1.5">
                   <span className="w-[70px] sm:w-[130px] text-gray-500 font-medium whitespace-nowrap">Nom :</span>
                   <span className="font-bold uppercase flex-1 text-gray-900 tracking-wider">{user.last_name || 'XXXXXXXXXX'}</span>
@@ -159,19 +132,7 @@ export default function MonComptePage() {
                   <span className="w-[70px] sm:w-[130px] text-gray-500 font-medium whitespace-nowrap">Prénom(s) :</span>
                   <span className="font-bold flex-1 uppercase tracking-wider text-gray-900">{user.first_name || 'XXXXXXXXXX'}</span>
                 </div>
-                <div className="flex mb-1 sm:mb-1.5">
-                  <span className="w-[70px] sm:w-[130px] text-gray-500 font-medium whitespace-nowrap">Date de naissance :</span>
-                  <span className="font-bold flex-1 text-gray-900">
-                    {user.date_naissance ? new Date(user.date_naissance).toLocaleDateString('fr-FR', {
-                      day: 'numeric', month: 'long', year: 'numeric'
-                    }) : '23 novembre 1965'}
-                  </span>
-                </div>
-                {/* LIEU SANS VIL */}
-                <div className="flex mb-1 sm:mb-1.5">
-                  <span className="w-[70px] sm:w-[130px] text-gray-500 font-medium whitespace-nowrap">Lieu de naissance :</span>
-                  <span className="font-bold flex-1 uppercase tracking-tight text-gray-900">{user.lieu_naissance || 'SAINT JEAN GBEDIGA'}</span>
-                </div>
+
                 <div className="flex mb-1 sm:mb-1.5 items-center">
                   <span className="w-[70px] sm:w-[130px] text-gray-500 font-medium whitespace-nowrap">Nationalité :</span>
                   <span className="font-bold uppercase text-[7px] sm:text-[11px] text-gray-900 tracking-widest">BENIN</span>
@@ -231,10 +192,7 @@ export default function MonComptePage() {
 
             </div>
 
-            {/* Bottom Expiration */}
-            <div className="absolute bottom-1.5 sm:bottom-3 left-3 sm:left-6 text-[8.5px] sm:text-[12px] font-bold text-gray-800 tracking-wide">
-               Expire le : <span className="text-[#C8102E] font-mono ml-1 sm:ml-2">{expirationDate}</span>
-            </div>
+
 
           </div>
         </div>

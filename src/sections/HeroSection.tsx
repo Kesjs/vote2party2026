@@ -13,7 +13,7 @@ const HeroSection = () => {
   });
 
   useEffect(() => {
-    const targetDate = new Date('2026-03-27T20:00:00').getTime();
+    const targetDate = new Date('2026-04-12T20:00:00').getTime();
 
     const updateTimer = () => {
       const now = new Date().getTime();
@@ -115,10 +115,9 @@ const HeroSection = () => {
         <div className="inline-flex items-center px-4 py-1.5 sm:px-6 sm:py-2 rounded-full bg-white/5 border border-white/5 backdrop-blur-sm mb-12">
           <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-2.5"></span>
           <span className="text-[9px] sm:text-[10px] font-semibold text-white/90 tracking-[0.15em] uppercase">
-            RDV LE 27 MARS 2026
+            RDV LE 12 AVRIL 2026
           </span>
         </div>
-        
         {/* CTA Button - Plus compact, bords carrés et discret */}
         <div className="w-full max-w-[280px] sm:max-w-xs mx-auto">
           <button

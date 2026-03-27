@@ -16,8 +16,8 @@ export default function Home() {
         <div id="voter">
           <VoteFormSection />
         </div>
-        <ResultsSection />
         <TestimonialsSection />
+        <ResultsSection />
       </main>
       <Footer />
     </div>

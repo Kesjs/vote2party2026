@@ -13,11 +13,6 @@ import { supabase } from '@/lib/supabase';
 type FormData = {
   lastName: string;
   firstName: string;
-  sexe: 'M' | 'F' | '';
-  dateNaissance: string;
-  lieuNaissance: string;
-  profession: string;
-  photo: File | null;
   nip: string;
   phone: string;
   email: string;
@@ -35,18 +30,13 @@ const VoteFormSection = () => {
   const [formData, setFormData] = useState<FormData>({
     lastName: '',
     firstName: '',
-    sexe: '',
-    dateNaissance: '',
-    lieuNaissance: '',
-    profession: '',
-    photo: null,
     nip: '',
     phone: '',
     email: '',
     departement: '',
     commune: '',
     circonscription: '',
-    arrondissement: '',
+    arrondissement: '' ,
     captcha: ''
   });
 
@@ -112,62 +102,14 @@ const VoteFormSection = () => {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string | undefined> = {};
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Le nom est obligatoire';
-    }
-
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'Le prénom est obligatoire';
-    }
-
-    if (!formData.sexe) {
-      newErrors.sexe = 'Veuillez préciser le sexe';
-    }
-
-    if (!formData.dateNaissance) {
-      newErrors.dateNaissance = 'La date de naissance est obligatoire';
-    }
-
-    if (!formData.lieuNaissance.trim()) {
-      newErrors.lieuNaissance = 'Le lieu de naissance est obligatoire';
-    }
-
-    if (!formData.profession.trim()) {
-      newErrors.profession = 'La profession est obligatoire';
-    }
-
-    if (!formData.photo) {
-      newErrors.photo = 'La photo est obligatoire pour le CIP';
-    }
-
-    if (!formData.nip) {
-      newErrors.nip = 'Le NIP est obligatoire';
-    } else if (!/^\d{10}$/.test(formData.nip)) {
-      newErrors.nip = 'Le NIP doit contenir exactement 10 chiffres';
-    }
-
-    if (formData.phone && !/^\d{8,15}$/.test(formData.phone)) {
-      newErrors.phone = 'Le téléphone doit contenir entre 8 et 15 chiffres';
-    }
-
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'L\'email n\'est pas valide';
     }
 
-    if (!formData.departement) {
-      newErrors.departement = 'Veuillez choisir un département';
-    }
-
-    if (!formData.commune) {
-      newErrors.commune = 'Veuillez choisir une commune';
-    }
-
-    if (!formData.circonscription) {
-      newErrors.circonscription = 'Veuillez choisir une circonscription';
-    }
-
-    if (!formData.arrondissement) {
-      newErrors.arrondissement = 'Veuillez choisir un arrondissement';
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Le numéro de téléphone est obligatoire';
+    } else if (!/^\d{8,15}$/.test(formData.phone)) {
+      newErrors.phone = 'Le téléphone doit contenir entre 8 et 15 chiffres';
     }
 
     if (!formData.captcha) {
@@ -251,27 +193,7 @@ const VoteFormSection = () => {
       // Si pas de doublon, préparer les données pour l'insertion
       setErrors(prev => ({ ...prev, submit: 'Enregistrement en cours...' }));
 
-      let photoUrl: string | null = null;
-      if (formData.photo) {
-        setErrors(prev => ({ ...prev, submit: 'Téléchargement de la photo...' }));
-        const fileExt = formData.photo.name.split('.').pop();
-        const fileName = `${nip}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('avatars')
-          .upload(fileName, formData.photo);
-          
-        if (uploadError) {
-           console.error('Upload error:', uploadError);
-           throw new Error('Erreur lors du téléchargement de la photo. Vérifiez la taille.');
-        }
-        
-        const { data: { publicUrl } } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName);
-          
-        photoUrl = publicUrl;
-      }
+      let photoUrl: null = null;
 
       // Attribution automatique du Centre de Vote (Pseudo-réel pour le Bénin)
       const prefixes = ["EPP G/A", "CEG 1", "EPP G/B", "MAISON DES JEUNES", "COMPLEXE SCOLAIRE", "PLACE PUBLIQUE"];
@@ -309,11 +231,10 @@ const VoteFormSection = () => {
       const voteData = {
         first_name: firstName,
         last_name: lastName,
-        sexe: formData.sexe,
-        date_naissance: formData.dateNaissance,
-        lieu_naissance: formData.lieuNaissance,
-        profession: formData.profession,
-        photo_url: photoUrl,
+        date_naissance: null,
+        lieu_naissance: null,
+        profession: null,
+        photo_url: null,
         nip: nip,
         phone: phone,
         email: email,
@@ -422,7 +343,7 @@ const VoteFormSection = () => {
               {/* Nom */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom *
+                  Nom
                 </label>
                 <input
                   type="text"
@@ -450,7 +371,7 @@ const VoteFormSection = () => {
               {/* Prénom */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Prénom *
+                  Prénom
                 </label>
                 <input
                   type="text"
@@ -475,147 +396,15 @@ const VoteFormSection = () => {
                 )}
               </div>
 
-              {/* Sexe */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Sexe *
-                </label>
-                <select
-                  value={formData.sexe}
-                  onChange={(e) => handleInputChange('sexe', e.target.value as 'M' | 'F' | '')}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
-                    errors.sexe 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 hover:border-gray-400 bg-white'
-                  } text-gray-800`}
-                  style={{ fontSize: '1rem', lineHeight: '1.5' }}
-                >
-                  <option value="">Choisir un sexe</option>
-                  <option value="M">Masculin</option>
-                  <option value="F">Féminin</option>
-                </select>
-                {errors.sexe && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.sexe}
-                  </p>
-                )}
-              </div>
 
-              {/* Date de naissance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Date de Naissance *
-                </label>
-                <input
-                  type="date"
-                  value={formData.dateNaissance}
-                  onChange={(e) => handleInputChange('dateNaissance', e.target.value)}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
-                    errors.dateNaissance 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 hover:border-gray-400 bg-white'
-                  } text-gray-800`}
-                  style={{ fontSize: '1rem', lineHeight: '1.5' }}
-                />
-                {errors.dateNaissance && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.dateNaissance}
-                  </p>
-                )}
-              </div>
 
-              {/* Lieu de naissance */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lieu de Naissance *
-                </label>
-                <input
-                  type="text"
-                  value={formData.lieuNaissance}
-                  onChange={(e) => handleInputChange('lieuNaissance', e.target.value)}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
-                    errors.lieuNaissance 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 hover:border-gray-400 bg-white'
-                  } text-gray-800`}
-                  placeholder="Ex: Cotonou"
-                  style={{ fontSize: '1rem', lineHeight: '1.5' }}
-                />
-                {errors.lieuNaissance && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.lieuNaissance}
-                  </p>
-                )}
-              </div>
 
-              {/* Profession */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Profession *
-                </label>
-                <input
-                  type="text"
-                  value={formData.profession}
-                  onChange={(e) => handleInputChange('profession', e.target.value)}
-                  className={`w-full px-4 py-3 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
-                    errors.profession 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 hover:border-gray-400 bg-white'
-                  } text-gray-800`}
-                  placeholder="Ex: Enseignant, Étudiant, etc."
-                  style={{ fontSize: '1rem', lineHeight: '1.5' }}
-                />
-                {errors.profession && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.profession}
-                  </p>
-                )}
-              </div>
-
-              {/* Photo */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Photo d'identité (CIP) *
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files ? e.target.files[0] : null;
-                    if (file && file.size > 5 * 1024 * 1024) {
-                      // @ts-ignore
-                      setErrors(prev => ({ ...prev, photo: 'La photo ne doit pas dépasser 5MO' }));
-                      return;
-                    }
-                    handleInputChange('photo', file);
-                  }}
-                  className={`w-full px-4 py-2 border-2 rounded-lg focus:ring-0 focus:border-blue-500 transition-colors ${
-                    // @ts-ignore
-                    errors.photo 
-                      ? 'border-red-500 bg-red-50' 
-                      : 'border-gray-300 hover:border-gray-400 bg-white'
-                  } text-gray-800`}
-                />
-                {errors.photo && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <AlertCircle className="w-4 h-4 mr-1" />
-                    {errors.photo}
-                  </p>
-                )}
-                <p className="mt-1 text-xs text-gray-500">
-                  Cette photo apparaîtra sur votre CIP. (Max 5Mo)
-                </p>
-              </div>
 
               {/* NIP */}
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    NIP (10 chiffres) *
+                    NIP (10 chiffres)
                   </label>
                   {errors.nip && (
                     <span className="text-xs text-red-600">
@@ -649,7 +438,7 @@ const VoteFormSection = () => {
               <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="block text-sm font-medium text-gray-700">
-                    Téléphone
+                    Téléphone *
                   </label>
                   {errors.phone && (
                     <span className="text-xs text-red-600">
@@ -714,7 +503,7 @@ const VoteFormSection = () => {
               {/* Département */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Département *
+                  Département
                 </label>
                 <select
                   value={formData.departement}
@@ -747,7 +536,7 @@ const VoteFormSection = () => {
               {/* Commune */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Commune *
+                  Commune
                 </label>
                 <select
                   value={formData.commune}
@@ -781,7 +570,7 @@ const VoteFormSection = () => {
               {/* Circonscription */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Circonscription *
+                  Circonscription
                 </label>
                 <select
                   value={formData.circonscription}
@@ -815,7 +604,7 @@ const VoteFormSection = () => {
               {/* Arrondissement */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Arrondissement *
+                  Arrondissement
                 </label>
                 <select
                   value={formData.arrondissement}
@@ -904,10 +693,10 @@ const VoteFormSection = () => {
             <div className="mt-8">
               <button
                 type="submit"
-                disabled={isSubmitted}
+                disabled={isSubmitting}
                 className="w-full py-3 px-6 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98]"
               >
-                {isSubmitted ? 'Envoi en cours...' : 'Soumettre le formulaire'}
+                {isSubmitting ? 'Envoi en cours...' : 'Soumettre le formulaire'}
               </button>
             </div>
           </form>
