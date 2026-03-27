@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
-import { AlertCircle, LogIn, ArrowLeft } from 'lucide-react';
+import { AlertCircle, LogIn, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 export default function ConnexionPage() {
   const [identifier, setIdentifier] = useState('');
   const [nip, setNip] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showNip, setShowNip] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
 
@@ -24,7 +25,7 @@ export default function ConnexionPage() {
       // Rechercher dans Supabase (NIP)
       const { data, error: sbError } = await supabase
         .from('votes')
-        .select('*')
+        .select('id, first_name, last_name, nip, phone, email, departement, commune, circonscription, arrondissement, centre_vote, bureau_vote, created_at')
         .eq('nip', nip.trim())
         .single();
       
@@ -84,7 +85,7 @@ export default function ConnexionPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm text-gray-900 bg-white"
                   placeholder="Dossou ou jean@email.com"
                 />
               </div>
@@ -94,17 +95,28 @@ export default function ConnexionPage() {
               <label htmlFor="nip" className="block text-sm font-medium text-gray-700">
                 NIP (Mot de passe)
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   id="nip"
-                  type="password"
+                  type={showNip ? 'text' : 'password'}
                   required
                   value={nip}
                   onChange={(e) => setNip(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm text-gray-900 bg-white pr-10"
                   placeholder="Votre NIP (10 chiffres)"
                   maxLength={10}
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                  onClick={() => setShowNip(!showNip)}
+                >
+                  {showNip ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
 

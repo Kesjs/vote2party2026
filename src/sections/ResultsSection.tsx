@@ -117,7 +117,7 @@ export default function ResultsSection() {
         setLoading(true);
         const { data, error } = await supabase
           .from('votes')
-          .select('*')
+          .select('id, first_name, last_name, email, phone, nip, departement, commune, circonscription, arrondissement, captcha, referral_link, created_at')
           .order('created_at', { ascending: false });
 
         if (error) {

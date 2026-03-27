@@ -8,10 +8,10 @@ import { Home, User, Mail, MapPin, Smartphone, Hash, Calendar } from 'lucide-rea
 
 interface UserData {
   id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  phone: string | null;
   nip: string;
   departement: string;
   commune: string;
@@ -39,7 +39,7 @@ export default function ScanPage() {
         
         const { data, error } = await supabase
           .from('votes')
-          .select('*')
+          .select('id, first_name, last_name, email, phone, nip, departement, commune, circonscription, arrondissement, created_at')
           .eq('id', id)
           .single();
 
@@ -125,7 +125,7 @@ export default function ScanPage() {
               <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-gray-500">Nom complet</dt>
                 <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {userData.firstName} {userData.lastName}
+                  {userData.first_name} {userData.last_name}
                 </dd>
               </div>
               

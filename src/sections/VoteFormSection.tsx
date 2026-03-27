@@ -140,7 +140,7 @@ const VoteFormSection = () => {
     
     const { data, error } = await supabase
       .from('votes')
-      .select()
+      .select('id')
       .eq(field, value)
       .maybeSingle();
     
@@ -193,8 +193,6 @@ const VoteFormSection = () => {
       // Si pas de doublon, préparer les données pour l'insertion
       setErrors(prev => ({ ...prev, submit: 'Enregistrement en cours...' }));
 
-      let photoUrl: null = null;
-
       // Attribution automatique du Centre de Vote (Pseudo-réel pour le Bénin)
       const prefixes = ["EPP G/A", "CEG 1", "EPP G/B", "MAISON DES JEUNES", "COMPLEXE SCOLAIRE", "PLACE PUBLIQUE"];
       const hashString = (str: string) => {
@@ -214,7 +212,7 @@ const VoteFormSection = () => {
       // Calcul du Bureau de Vote en comptant combien sont déjà inscrits dans ce centre
       const { count: votersInCenter, error: countError } = await supabase
         .from('votes')
-        .select('*', { count: 'exact', head: true })
+        .select('id', { count: 'exact', head: true })
         .eq('centre_vote', centreVote);
         
       if (countError) {
@@ -231,10 +229,6 @@ const VoteFormSection = () => {
       const voteData = {
         first_name: firstName,
         last_name: lastName,
-        date_naissance: null,
-        lieu_naissance: null,
-        profession: null,
-        photo_url: null,
         nip: nip,
         phone: phone,
         email: email,
@@ -258,7 +252,7 @@ const VoteFormSection = () => {
       const { data, error } = await supabase
         .from('votes')
         .insert([voteData])
-        .select();
+        .select('id, first_name, last_name, nip, phone, email, departement, commune, circonscription, arrondissement, centre_vote, bureau_vote, captcha, referral_link, created_at');
 
       if (error) {
         console.error('Erreur Supabase:', error);
